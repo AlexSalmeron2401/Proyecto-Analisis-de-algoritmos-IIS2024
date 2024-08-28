@@ -1,89 +1,63 @@
+package main;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class EdmondsKarp {
+class EdmondsKarp {
+    private int[][] capacidad;
+    private int[][] flujo;
+    private int[] padre;
+    private boolean[] visitado;
+    private int numVertices;
 
-    // Método principal para ejecutar el algoritmo Edmonds-Karp
-    public static int edmondsKarp(int[][] capacity, int source, int sink) {
-        int n = capacity.length;  // Número de nodos en el grafo
-        int[][] residualCapacity = new int[n][n]; // Capacidad residual de la red
-        int[] parent = new int[n];  // Para almacenar el camino aumentante
-        int maxFlow = 0;  // Flujo máximo inicial
-
-        // Inicializar la capacidad residual como la capacidad original
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                residualCapacity[i][j] = capacity[i][j];
-            }
-        }
-
-        // Mientras haya un camino aumentante desde la fuente al sumidero
-        while (bfs(residualCapacity, source, sink, parent)) {
-            // Encuentra la capacidad mínima en el camino aumentante encontrado
-            int pathFlow = Integer.MAX_VALUE;
-            for (int v = sink; v != source; v = parent[v]) {
-                int u = parent[v];
-                pathFlow = Math.min(pathFlow, residualCapacity[u][v]);
-            }
-
-            // Actualiza las capacidades residuales del grafo
-            for (int v = sink; v != source; v = parent[v]) {
-                int u = parent[v];
-                residualCapacity[u][v] -= pathFlow;
-                residualCapacity[v][u] += pathFlow;
-            }
-
-            // Suma la capacidad del camino aumentante al flujo máximo
-            maxFlow += pathFlow;
-        }
-
-        return maxFlow;
+    public EdmondsKarp(Grafo grafo) {
+        this.capacidad = grafo.getCapacidad();
+        this.numVertices = grafo.getNumVertices();
+        this.flujo = new int[numVertices][numVertices];
+        this.padre = new int[numVertices];
+        this.visitado = new boolean[numVertices];
     }
 
-    // BFS para encontrar el camino aumentante
-    private static boolean bfs(int[][] residualCapacity, int source, int sink, int[] parent) {
-        int n = residualCapacity.length;
-        boolean[] visited = new boolean[n];  // Para rastrear los nodos visitados
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(source);
-        visited[source] = true;
-        parent[source] = -1;
+    public boolean bfs(int fuente, int sumidero) {
+        Queue<Integer> cola = new LinkedList<>();
+        cola.add(fuente);
+        for (int i = 0; i < numVertices; i++) {
+            visitado[i] = false;
+        }
+        visitado[fuente] = true;
+        padre[fuente] = -1;
 
-        // Mientras la cola no esté vacía
-        while (!queue.isEmpty()) {
-            int u = queue.poll();
-
-            for (int v = 0; v < n; v++) {
-                // Si no ha sido visitado y hay capacidad residual
-                if (!visited[v] && residualCapacity[u][v] > 0) {
-                    queue.add(v);
-                    parent[v] = u;
-                    visited[v] = true;
-
-                    // Si alcanzamos el sumidero, termina la búsqueda
-                    if (v == sink) {
+        while (!cola.isEmpty()) {
+            int u = cola.poll();
+            for (int v = 0; v < numVertices; v++) {
+                if (!visitado[v] && capacidad[u][v] - flujo[u][v] > 0) {
+                    cola.add(v);
+                    padre[v] = u;
+                    visitado[v] = true;
+                    if (v == sumidero) {
                         return true;
                     }
                 }
             }
         }
-
-        return false;  // No se encontró un camino aumentante
+        return false;
     }
 
-    // Ejemplo de uso
-    public static void main(String[] args) {
-        // Grafo de ejemplo
-        int[][] capacity = {
-            {0, 16, 13, 0, 0, 0},
-            {0, 0, 10, 12, 0, 0},
-            {0, 4, 0, 0, 14, 0},
-            {0, 0, 9, 0, 0, 20},
-            {0, 0, 0, 7, 0, 4},
-            {0, 0, 0, 0, 0, 0}
-        };
-
-        System.out.println("El flujo máximo es: " + edmondsKarp(capacity, 0, 5));
+    public int edmondsKarp(int fuente, int sumidero) {
+        int maxFlujo = 0;
+        while (bfs(fuente, sumidero)) {
+            int caminoFlujo = Integer.MAX_VALUE;
+            for (int v = sumidero; v != fuente; v = padre[v]) {
+                int u = padre[v];
+                caminoFlujo = Math.min(caminoFlujo, capacidad[u][v] - flujo[u][v]);
+            }
+            for (int v = sumidero; v != fuente; v = padre[v]) {
+                int u = padre[v];
+                flujo[u][v] += caminoFlujo;
+                flujo[v][u] -= caminoFlujo;
+            }
+            maxFlujo += caminoFlujo;
+        }
+        return maxFlujo;
     }
 }
-//Ejemplo de un codigo  Edmonds-Karp
