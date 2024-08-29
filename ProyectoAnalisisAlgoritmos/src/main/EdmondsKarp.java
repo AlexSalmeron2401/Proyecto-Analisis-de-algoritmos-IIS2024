@@ -1,5 +1,6 @@
 package main;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -9,27 +10,30 @@ class EdmondsKarp {
     private int[] padre;
     private boolean[] visitado;
     private int numVertices;
+    private int comparaciones;
+    private int asignaciones;
 
     public EdmondsKarp(Grafo grafo) {
-        this.capacidad = grafo.getCapacidad();
-        this.numVertices = grafo.getNumVertices();
+        this.capacidad = grafo.getCapacity();
+        this.numVertices = grafo.getV();
         this.flujo = new int[numVertices][numVertices];
         this.padre = new int[numVertices];
         this.visitado = new boolean[numVertices];
+        this.comparaciones = 0;
+        this.asignaciones = 0;
     }
 
     public boolean bfs(int fuente, int sumidero) {
         Queue<Integer> cola = new LinkedList<>();
         cola.add(fuente);
-        for (int i = 0; i < numVertices; i++) {
-            visitado[i] = false;
-        }
+        Arrays.fill(visitado, false);
         visitado[fuente] = true;
         padre[fuente] = -1;
 
         while (!cola.isEmpty()) {
             int u = cola.poll();
             for (int v = 0; v < numVertices; v++) {
+                comparaciones++;
                 if (!visitado[v] && capacidad[u][v] - flujo[u][v] > 0) {
                     cola.add(v);
                     padre[v] = u;
@@ -55,9 +59,18 @@ class EdmondsKarp {
                 int u = padre[v];
                 flujo[u][v] += caminoFlujo;
                 flujo[v][u] -= caminoFlujo;
+                asignaciones += 2;
             }
             maxFlujo += caminoFlujo;
         }
         return maxFlujo;
+    }
+
+    public int getComparisons() {
+        return comparaciones;
+    }
+
+    public int getAssignments() {
+        return asignaciones;
     }
 }
