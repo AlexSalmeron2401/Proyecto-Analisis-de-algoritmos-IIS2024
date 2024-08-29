@@ -29,7 +29,7 @@ public class Main {
         }
         //Grafo con el algoritmo FordFulkersen
         System.out.println("-------------------------------------------------------------------------");
-         for (int i = 0; i < vertices.length; i++) {
+        for (int i = 0; i < vertices.length; i++) {
             Grafo graph1 = new Grafo(vertices[i], edges[i]);
             Grafo graph2 = new Grafo(vertices[i], edges[i + 4]);
             FordFulkerson fordFulkerson = new FordFulkerson();
@@ -47,6 +47,25 @@ public class Main {
             System.out.println("El flujo maximo es: " + fordFulkerson.fordFulkerson(graph2, source, sink));
             System.out.println("Comparaciones: " + fordFulkerson.getComparisons());
             System.out.println("Asignaciones: " + fordFulkerson.getAssignments());
+        }
+        System.out.println("-------------------------------------------------------------------------");
+        for (int i = 0; i < vertices.length; i++) {
+            Grafo graph1 = new Grafo(vertices[i], edges[i]);
+            Grafo graph2 = new Grafo(vertices[i], edges[i + 4]);
+            Dinic dinic1 = new Dinic(vertices[i]);
+            Dinic dinic2 = new Dinic(vertices[i]);
+            int source = 0;
+            int sink = vertices[i] - 1;
+
+            // Initialize Dinic with graph1
+            dinic1.initializeFromGrafo(graph1);
+            System.out.println("Numero de vertices: " + vertices[i] + ", Numero de arcos: " + edges[i]);
+            System.out.println("El flujo maximo es: " + dinic1.maxFlow(source, sink));
+
+            // Initialize Dinic with graph2
+            dinic2.initializeFromGrafo(graph2);
+            System.out.println("Numero de vertices: " + vertices[i] + ", Numero de arcos: " + edges[i + 4]);
+            System.out.println("El flujo maximo es: " + dinic2.maxFlow(source, sink));
         }
     }
 }
