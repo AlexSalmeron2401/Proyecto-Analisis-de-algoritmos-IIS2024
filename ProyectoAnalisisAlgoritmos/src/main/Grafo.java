@@ -41,7 +41,7 @@ public class Grafo {
     // Función para imprimir el grafo
     public void printGraph() {
         System.out.println("Matriz de capacidades del grafo:");
-        for (int i = 0; i < V; i++) {
+        for (int i = 0; i < V; i++) {            
             for (int j = 0; j < V; j++) {
                 System.out.print(capacity[i][j] + "\t");
             }

@@ -1,6 +1,5 @@
 package main;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Arrays;
 
 public class FordFulkerson {
     private int comparisons; // Contador de comparaciones
@@ -11,59 +10,62 @@ public class FordFulkerson {
         this.assignments = 0;
     }
 
-    // BFS que busca un camino aumentante
-    private boolean bfs(int[][] residualGraph, int source, int sink, int[] parent, int V) {
-        boolean[] visited = new boolean[V];
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(source);
+    // DFS que busca un camino aumentante en el grafo residual
+    private boolean dfs(int[][] residualGraph, int source, int sink, int[] parent, boolean[] visited, int V) {
+        // Marcar el vértice actual como visitado
         visited[source] = true;
-        parent[source] = -1;
-        assignments += 3; // Asignaciones iniciales
+        assignments++; // Asignación de visited[source]
 
-        while (!queue.isEmpty()) {
-            int u = queue.poll();
-            assignments++; // Asignación
+        // Si llegamos al sumidero, retornamos true (encontramos un camino)
+        if (source == sink) {
+            comparisons++; // Comparación
+            return true;
+        }
 
-            for (int v = 0; v < V; v++) {
-                comparisons++; // Comparación
-                if (!visited[v] && residualGraph[u][v] > 0) {
-                    comparisons += 2; // Comparación dentro del if
-                    parent[v] = u;
-                    assignments += 2; // Asignaciones
-                    if (v == sink) {
-                        return true;
-                    }
-                    queue.add(v);
-                    visited[v] = true;
-                    assignments += 2; // Asignaciones
+        // Explorar todos los vértices adyacentes a source
+        for (int v = 0; v < V; v++) {
+            comparisons++; // Comparación en el bucle for
+            // Si no está visitado y hay capacidad positiva en el arco residual
+            if (!visited[v] && residualGraph[source][v] > 0) {
+                comparisons += 2; // Comparaciones en el if
+                parent[v] = source;
+                assignments += 2; // Asignación de parent y visited
+                if (dfs(residualGraph, v, sink, parent, visited, V)) {
+                    return true;
                 }
             }
         }
+
+        // No se encontró un camino aumentante
         return false;
     }
 
     // Función principal para encontrar el flujo máximo
-    public int fordFulkerson(Grafo graph, int source, int sink) {
-        int V = graph.getV();
-        int[][] capacity = graph.getCapacity();
-        int[][] residualGraph = new int[V][V];
-
+    public int fordFulkerson(int[][] graph, int source, int sink, int V) {
+        int[][] residualGraph = new int[V][V]; // Grafo residual
         for (int i = 0; i < V; i++) {
             for (int j = 0; j < V; j++) {
-                residualGraph[i][j] = capacity[i][j];
+                residualGraph[i][j] = graph[i][j];
                 assignments++; // Asignación
             }
         }
 
-        int[] parent = new int[V];
-        int maxFlow = 0;
-        assignments += 2; // Asignaciones iniciales
+        int[] parent = new int[V]; // Para almacenar el camino aumentante
+        boolean[] visited = new boolean[V]; // Para marcar vértices visitados
+        int maxFlow = 0; // Inicializar el flujo máximo
+        assignments += 3; // Asignación de parent, visited y maxFlow
 
-        // Aumentar el flujo mientras haya un camino aumentante
-        while (bfs(residualGraph, source, sink, parent, V)) {
-            int pathFlow = Integer.MAX_VALUE;
+        // Mientras haya un camino aumentante, incrementar el flujo máximo
+        while (true) {
+            Arrays.fill(visited, false); // Reiniciar los vértices visitados
             assignments++; // Asignación
+            if (!dfs(residualGraph, source, sink, parent, visited, V)) {
+                comparisons++; // Comparación del while
+                break; // Si no se encuentra un camino aumentante, salimos del bucle
+            }
 
+            // Encontrar la capacidad mínima en el camino aumentante encontrado por DFS
+            int pathFlow = Integer.MAX_VALUE;
             for (int v = sink; v != source; v = parent[v]) {
                 int u = parent[v];
                 comparisons += 2; // Comparaciones en el bucle for
@@ -71,6 +73,7 @@ public class FordFulkerson {
                 assignments++; // Asignación
             }
 
+            // Actualizar las capacidades residuales del grafo
             for (int v = sink; v != source; v = parent[v]) {
                 int u = parent[v];
                 residualGraph[u][v] -= pathFlow;
@@ -78,18 +81,23 @@ public class FordFulkerson {
                 assignments += 2; // Asignaciones
             }
 
-            maxFlow += pathFlow;
-            assignments++; // Asignación
+            maxFlow += pathFlow; // Sumar el flujo del camino al flujo total
+            assignments++; // Asignación de maxFlow
         }
 
         return maxFlow;
     }
 
+    // Getters para comparaciones y asignaciones
     public int getComparisons() {
         return comparisons;
     }
 
     public int getAssignments() {
         return assignments;
+    }
+    public void resetCounters() {
+        this.comparisons = 0;
+        this.assignments = 0;
     }
 }
