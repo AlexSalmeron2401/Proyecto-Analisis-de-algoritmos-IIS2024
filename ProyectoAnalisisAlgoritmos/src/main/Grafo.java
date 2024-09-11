@@ -1,51 +1,64 @@
 package main;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
+
 public class Grafo {
-    private int V; // Número de vértices en el grafo
-    private int[][] capacity; // Capacidad de cada arco
+    private int[][] capacidad;
+    private int numVertices;
 
-    // Constructor que genera un grafo aleatorio
-    public Grafo(int vertices, int edges) {
-        this.V = vertices;
-        this.capacity = new int[vertices][vertices];
+    // Constructor original que genera aristas aleatorias
+    public Grafo(int vertices, int arcos) {
+        numVertices = vertices;
+        capacidad = new int[vertices][vertices];
         Random rand = new Random();
+        List<int[]> posiblesAristas = new ArrayList<>();
 
-        // Conectar un camino directo de la fuente al sumidero para garantizar conectividad
-        for (int i = 0; i < vertices - 1; i++) {
-            int cap = rand.nextInt(20) + 1; // Capacidad aleatoria entre 1 y 20
-            capacity[i][i + 1] = cap;
-        }
-
-        // Generar otros arcos aleatorios con capacidades aleatorias
-        for (int i = 0; i < edges - (vertices - 1); i++) { // Ajuste en el número de arcos
-            int u = rand.nextInt(vertices);
-            int v = rand.nextInt(vertices);
-            if (u != v && capacity[u][v] == 0) { // Evitar bucles y arcos duplicados
-                int cap = rand.nextInt(20) + 1;
-                capacity[u][v] = cap;
+        // Generar todas las posibles aristas válidas
+        for (int from = 0; from < vertices; from++) {
+            for (int to = 0; to < vertices; to++) {
+                if (from != to) {
+                    posiblesAristas.add(new int[]{from, to});
+                }
             }
         }
+
+        // Barajar las posibles aristas
+        Collections.shuffle(posiblesAristas, rand);
+
+        // Seleccionar las primeras 'arcos' aristas
+        for (int i = 0; i < arcos && i < posiblesAristas.size(); i++) {
+            int[] arista = posiblesAristas.get(i);
+            int from = arista[0];
+            int to = arista[1];
+            int peso = 20 + rand.nextInt(681); // Peso entre 20 y 700
+            capacidad[from][to] = peso;
+        }
     }
 
-    // Getter para el número de vértices
+    // Nuevo constructor que acepta una matriz de capacidades
+    public Grafo(int[][] capacidad) {
+        this.numVertices = capacidad.length;
+        this.capacidad = capacidad;
+    }
+
     public int getV() {
-        return V;
+        return numVertices;
     }
 
-    // Getter para la capacidad del grafo
     public int[][] getCapacity() {
-        return capacity;
+        return capacidad;
     }
 
-    // Función para imprimir el grafo
     public void printGraph() {
-        System.out.println("Matriz de capacidades del grafo:");
-        for (int i = 0; i < V; i++) {            
-            for (int j = 0; j < V; j++) {
-                System.out.print(capacity[i][j] + "\t");
+        System.out.println("Matriz de capacidad del grafo:");
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 0; j < numVertices; j++) {
+                System.out.print(capacidad[i][j] + "\t");
             }
             System.out.println();
         }
     }
 }
+
