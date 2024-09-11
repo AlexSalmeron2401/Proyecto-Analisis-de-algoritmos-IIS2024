@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -88,12 +89,16 @@ public class Main {
                     System.out.println("El flujo maximo es: " + maxFlowDinic1);
                     System.out.println("Comparaciones: " + dinic1.getComparisons());
                     System.out.println("Asignaciones: " + dinic1.getAssignments());
+                    System.out.println("Rutas de flujo maximo para el primer grafo:");
+                    printPaths(dinic1.getAllPaths());
 
                     System.out.println("Numero de vertices: " + vertices[i] + ", Numero de arcos: " + arcos[i + 4]);
                     int maxFlowDinic2 = dinic2.maxFlow(source, sink);
                     System.out.println("El flujo maximo es: " + maxFlowDinic2);
                     System.out.println("Comparaciones: " + dinic2.getComparisons());
                     System.out.println("Asignaciones: " + dinic2.getAssignments());
+                    System.out.println("Rutas de flujo maximo para el segundo grafo:");
+                    printPaths(dinic2.getAllPaths());
 
                     System.out.println("-------------------------------------------------\n");
                 } else {
@@ -140,6 +145,12 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+    // Método auxiliar para imprimir todas las rutas
+    public static void printPaths(List<List<Integer>> paths) {
+        for (List<Integer> path : paths) {
+            System.out.println("Ruta: " + path);
         }
     }
 }

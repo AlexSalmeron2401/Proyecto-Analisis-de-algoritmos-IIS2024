@@ -12,6 +12,9 @@ public class Dinic {
     int comparisons = 0;
     int assignments = 0;
 
+    // Lista para almacenar todas las rutas del flujo
+    List<List<Integer>> allPaths;
+
     public Dinic(Grafo g) {
         this.nodes = g.getV();
         this.capacity = g.getCapacity();
@@ -21,6 +24,7 @@ public class Dinic {
         }
         this.level = new int[nodes];
         this.ptr = new int[nodes];
+        this.allPaths = new ArrayList<>();  // Inicializamos la lista de todas las rutas
         
         // Inicializar la lista de adyacencia basándose en la capacidad
         for (int u = 0; u < nodes; u++) {
@@ -58,16 +62,22 @@ public class Dinic {
         return level[sink] != -1;
     }
 
-    int dfs(int u, int flow) {
+    int dfs(int u, int flow, List<Integer> path) {
         if (flow == 0) return 0;
-        if (u == sink) return flow;
+        if (u == sink) {
+            // Al llegar al sumidero, guardamos la ruta actual
+            path.add(sink); // Añadir el nodo sink a la ruta
+            allPaths.add(new ArrayList<>(path)); // Guardar la ruta completa
+            return flow;
+        }
         assignments++; // Asignación por recorrer el nodo
 
         for (; ptr[u] < adj.get(u).size(); ptr[u]++) {
             int v = adj.get(u).get(ptr[u]);
             comparisons += 2; // Comparaciones por verificar el nivel y la capacidad
             if (level[v] == level[u] + 1 && capacity[u][v] > 0) {
-                int pushed = dfs(v, Math.min(flow, capacity[u][v]));
+                path.add(u); // Añadir el nodo actual a la ruta
+                int pushed = dfs(v, Math.min(flow, capacity[u][v]), path);
                 comparisons++; // Comparación por el flujo empujado
                 if (pushed > 0) {
                     capacity[u][v] -= pushed;
@@ -75,6 +85,7 @@ public class Dinic {
                     assignments += 2; // Asignaciones por actualizar las capacidades
                     return pushed;
                 }
+                path.remove(path.size() - 1); // Quitar el nodo si no se encontró flujo
             }
         }
         return 0;
@@ -90,7 +101,7 @@ public class Dinic {
             assignments++; // Asignación por reiniciar ptr
 
             int pushed;
-            while ((pushed = dfs(source, INF)) != 0) {
+            while ((pushed = dfs(source, INF, new ArrayList<>())) != 0) {
                 flow += pushed;
                 assignments++; // Asignación por actualizar el flujo
             }
@@ -105,9 +116,17 @@ public class Dinic {
     public int getAssignments() {
         return assignments;
     }
+
     public void resetCounters() {
         this.comparisons = 0;
         this.assignments = 0;
+        this.allPaths.clear(); // Reiniciar las rutas almacenadas
+    }
+
+    // Método para obtener todas las rutas encontradas
+    public List<List<Integer>> getAllPaths() {
+        return allPaths;
     }
 }
+
 
