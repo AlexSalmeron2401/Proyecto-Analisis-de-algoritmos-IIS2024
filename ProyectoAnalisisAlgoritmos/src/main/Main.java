@@ -35,42 +35,65 @@ public class Main {
                     int sink = vertices[i] - 1;
 
                     // Inicialización y ejecución del algoritmo Edmonds-Karp
-                    System.out.println("EdmondsKarp");
+                    System.out.println("Edmonds-Karp");
                     EdmondsKarp edmondsKarp1 = new EdmondsKarp(grafo1);
                     EdmondsKarp edmondsKarp2 = new EdmondsKarp(grafo2);
                     
                     edmondsKarp1.resetCounters();
                     edmondsKarp2.resetCounters();
+                    
+                    long startTime = System.nanoTime(); // Tiempo inicial en nanosegundos
 
                     System.out.println("Numero de vertices: " + vertices[i] + ", Numero de arcos: " + arcos[i]);
-                    System.out.println("El flujo maximo es: " + edmondsKarp1.edmondsKarp(source, sink));
+                    int maxFlowEdmondsKarp1 = edmondsKarp1.edmondsKarp(source, sink);
+                    long endTime = System.nanoTime(); // Tiempo final en nanosegundos
+                    System.out.println("El flujo maximo es: " + maxFlowEdmondsKarp1);
+                    System.out.println("Tiempo de ejecucion: " + (endTime - startTime) + " ns");
+                    System.out.println("Rutas de flujo maximo para el primer grafo:");
+                    printPathsWithFlow(edmondsKarp1.getAllPathsWithFlow(source, sink));
                     System.out.println("Comparaciones: " + edmondsKarp1.getComparisons());
                     System.out.println("Asignaciones: " + edmondsKarp1.getAssignments());
-
+                    
+                    startTime = System.nanoTime();
                     System.out.println("Numero de vertices: " + vertices[i] + ", Numero de arcos: " + arcos[i + 4]);
-                    System.out.println("El flujo maximo es: " + edmondsKarp2.edmondsKarp(source, sink));
+                    int maxFlowEdmondsKarp2 = edmondsKarp2.edmondsKarp(source, sink);
+                    endTime = System.nanoTime();
+                    System.out.println("El flujo maximo es: " + maxFlowEdmondsKarp2);
+                    System.out.println("Tiempo de ejecucion: " + (endTime - startTime) + " ns");
+                    System.out.println("Rutas de flujo maximo para el segundo grafo:");
+                    printPathsWithFlow(edmondsKarp2.getAllPathsWithFlow(source, sink));
                     System.out.println("Comparaciones: " + edmondsKarp2.getComparisons());
                     System.out.println("Asignaciones: " + edmondsKarp2.getAssignments());
 
                     System.out.println("############################################################");
 
                     // Inicialización y ejecución del algoritmo Ford-Fulkerson
-                    System.out.println("FordFulkerson");
+                    System.out.println("Ford-Fulkerson");
                     FordFulkerson fordFulkerson1 = new FordFulkerson();
                     FordFulkerson fordFulkerson2 = new FordFulkerson();
 
                     fordFulkerson1.resetCounters();
                     fordFulkerson2.resetCounters();
 
+                    startTime = System.nanoTime();
                     System.out.println("Numero de vertices: " + vertices[i] + ", Numero de arcos: " + arcos[i]);
                     int maxFlowFordFulkerson1 = fordFulkerson1.fordFulkerson(grafo1.getCapacity(), source, sink, grafo1.getV());
+                    endTime = System.nanoTime();
                     System.out.println("El flujo maximo es: " + maxFlowFordFulkerson1);
+                    System.out.println("Tiempo de ejecucion: " + (endTime - startTime) + " ns");
+                    System.out.println("Rutas de flujo maximo para el primer grafo:");
+                    printPathsWithFlow(fordFulkerson1.getAllPathsWithFlow()); // Método adaptado
                     System.out.println("Comparaciones: " + fordFulkerson1.getComparisons());
                     System.out.println("Asignaciones: " + fordFulkerson1.getAssignments());
 
+                    startTime = System.nanoTime();
                     System.out.println("Numero de vertices: " + vertices[i] + ", Numero de arcos: " + arcos[i + 4]);
                     int maxFlowFordFulkerson2 = fordFulkerson2.fordFulkerson(grafo2.getCapacity(), source, sink, grafo2.getV());
+                    endTime = System.nanoTime();
                     System.out.println("El flujo maximo es: " + maxFlowFordFulkerson2);
+                    System.out.println("Tiempo de ejecucion: " + (endTime - startTime) + " ns");
+                    System.out.println("Rutas de flujo maximo para el segundo grafo:");
+                    printPathsWithFlow(fordFulkerson2.getAllPathsWithFlow()); // Método adaptado
                     System.out.println("Comparaciones: " + fordFulkerson2.getComparisons());
                     System.out.println("Asignaciones: " + fordFulkerson2.getAssignments());
 
@@ -84,21 +107,27 @@ public class Main {
                     dinic1.resetCounters();
                     dinic2.resetCounters();
 
+                    startTime = System.nanoTime();
                     System.out.println("Numero de vertices: " + vertices[i] + ", Numero de arcos: " + arcos[i]);
                     int maxFlowDinic1 = dinic1.maxFlow(source, sink);
+                    endTime = System.nanoTime();
                     System.out.println("El flujo maximo es: " + maxFlowDinic1);
+                    System.out.println("Tiempo de ejecucion: " + (endTime - startTime) + " ns");
                     System.out.println("Comparaciones: " + dinic1.getComparisons());
                     System.out.println("Asignaciones: " + dinic1.getAssignments());
                     System.out.println("Rutas de flujo maximo para el primer grafo:");
-                    printPaths(dinic1.getAllPaths());
+                    printPathsWithFlow(dinic1.getAllPathsWithFlow());
 
+                    startTime = System.nanoTime();
                     System.out.println("Numero de vertices: " + vertices[i] + ", Numero de arcos: " + arcos[i + 4]);
                     int maxFlowDinic2 = dinic2.maxFlow(source, sink);
+                    endTime = System.nanoTime();
                     System.out.println("El flujo maximo es: " + maxFlowDinic2);
+                    System.out.println("Tiempo de ejecucion: " + (endTime - startTime) + " ns");
                     System.out.println("Comparaciones: " + dinic2.getComparisons());
                     System.out.println("Asignaciones: " + dinic2.getAssignments());
                     System.out.println("Rutas de flujo maximo para el segundo grafo:");
-                    printPaths(dinic2.getAllPaths());
+                    printPathsWithFlow(dinic2.getAllPathsWithFlow());
 
                     System.out.println("-------------------------------------------------\n");
                 } else {
@@ -147,10 +176,20 @@ public class Main {
             return null;
         }
     }
-    // Método auxiliar para imprimir todas las rutas
-    public static void printPaths(List<List<Integer>> paths) {
-        for (List<Integer> path : paths) {
-            System.out.println("Ruta: " + path);
+
+    // Método auxiliar para imprimir todas las rutas con su flujo
+    public static void printPathsWithFlow(List<?> pathsWithFlow) {
+        for (Object obj : pathsWithFlow) {
+            if (obj instanceof Dinic.PathWithFlow) {
+                Dinic.PathWithFlow pathWithFlow = (Dinic.PathWithFlow) obj;
+                System.out.println("Ruta: " + pathWithFlow.path + ", Flujo: " + pathWithFlow.flow);
+            } else if (obj instanceof EdmondsKarp.PathWithFlow) {
+                EdmondsKarp.PathWithFlow pathWithFlow = (EdmondsKarp.PathWithFlow) obj;
+                System.out.println("Ruta: " + pathWithFlow.path + ", Flujo: " + pathWithFlow.flow);
+            } else if (obj instanceof FordFulkerson.PathWithFlow) {
+                FordFulkerson.PathWithFlow pathWithFlow = (FordFulkerson.PathWithFlow) obj;
+                System.out.println("Ruta: " + pathWithFlow.path + ", Flujo: " + pathWithFlow.flow);
+            }
         }
     }
 }

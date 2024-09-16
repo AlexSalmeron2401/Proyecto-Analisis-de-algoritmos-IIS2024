@@ -1,7 +1,9 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 class EdmondsKarp {
@@ -84,6 +86,40 @@ class EdmondsKarp {
         return maxFlujo;
     }
 
+    // Método para recuperar las rutas de flujo máximo con sus flujos
+    public List<PathWithFlow> getAllPathsWithFlow(int fuente, int sumidero) {
+        List<PathWithFlow> pathsWithFlow = new ArrayList<>();
+        boolean[] visited = new boolean[numVertices];
+        ArrayList<Integer> path = new ArrayList<>();
+        dfs(fuente, sumidero, visited, path, pathsWithFlow);
+        return pathsWithFlow;
+    }
+
+    // Método DFS para recuperar las rutas con su flujo
+    private void dfs(int current, int sink, boolean[] visited, ArrayList<Integer> path, List<PathWithFlow> pathsWithFlow) {
+        visited[current] = true;
+        path.add(current);
+
+        if (current == sink) {
+            int pathFlow = Integer.MAX_VALUE;
+            for (int i = 1; i < path.size(); i++) {
+                int u = path.get(i - 1);
+                int v = path.get(i);
+                pathFlow = Math.min(pathFlow, flujo[u][v]);
+            }
+            pathsWithFlow.add(new PathWithFlow(new ArrayList<>(path), pathFlow));
+        } else {
+            for (int v = 0; v < numVertices; v++) {
+                if (!visited[v] && flujo[current][v] > 0) {
+                    dfs(v, sink, visited, path, pathsWithFlow);
+                }
+            }
+        }
+
+        path.remove(path.size() - 1);
+        visited[current] = false;
+    }
+
     // Retorna el número de comparaciones realizadas
     public int getComparisons() {
         return comparaciones;
@@ -93,8 +129,20 @@ class EdmondsKarp {
     public int getAssignments() {
         return asignaciones;
     }
+
     public void resetCounters() {
         this.comparaciones = 0;
         this.asignaciones = 0;
+    }
+
+    // Clase para almacenar la ruta y el flujo asociado
+    public static class PathWithFlow {
+        public final List<Integer> path;
+        public final int flow;
+
+        public PathWithFlow(List<Integer> path, int flow) {
+            this.path = path;
+            this.flow = flow;
+        }
     }
 }
