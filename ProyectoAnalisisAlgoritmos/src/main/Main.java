@@ -1,15 +1,16 @@
 package main;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
         // Define el directorio actual donde se encuentran los archivos
-        String directoryPath = System.getProperty("user.dir") + File.separator;
+        Path directoryPath = Paths.get(System.getProperty("user.dir"));
 
         int[] vertices = {10, 20, 40, 80};
         int[] arcos = {12, 24, 48, 56, 100, 400, 1600, 6400};
@@ -18,8 +19,8 @@ public class Main {
         for (int i = 0; i < vertices.length; i++) {
             if (i + 4 < arcos.length) {
                 // Archivos de entrada
-                String filename1 = directoryPath + "Grafo_" + vertices[i] + "_vertices_" + arcos[i] + "_arcos.txt";
-                String filename2 = directoryPath + "Grafo_" + vertices[i] + "_vertices_" + arcos[i + 4] + "_arcos.txt";
+                Path filename1 = directoryPath.resolve("Grafo_" + vertices[i] + "_vertices_" + arcos[i] + "_arcos.txt");
+                Path filename2 = directoryPath.resolve("Grafo_" + vertices[i] + "_vertices_" + arcos[i + 4] + "_arcos.txt");
 
                 // Leer matrices desde los archivos
                 int[][] matrix1 = readMatrixFromFile(filename1);
@@ -38,10 +39,10 @@ public class Main {
                     System.out.println("Edmonds-Karp");
                     EdmondsKarp edmondsKarp1 = new EdmondsKarp(grafo1);
                     EdmondsKarp edmondsKarp2 = new EdmondsKarp(grafo2);
-                    
+
                     edmondsKarp1.resetCounters();
                     edmondsKarp2.resetCounters();
-                    
+
                     long startTime = System.nanoTime(); // Tiempo inicial en nanosegundos
 
                     System.out.println("Numero de vertices: " + vertices[i] + ", Numero de arcos: " + arcos[i]);
@@ -53,7 +54,7 @@ public class Main {
                     printPathsWithFlow(edmondsKarp1.getAllPathsWithFlow(source, sink));
                     System.out.println("Comparaciones: " + edmondsKarp1.getComparisons());
                     System.out.println("Asignaciones: " + edmondsKarp1.getAssignments());
-                    
+
                     startTime = System.nanoTime();
                     System.out.println("Numero de vertices: " + vertices[i] + ", Numero de arcos: " + arcos[i + 4]);
                     int maxFlowEdmondsKarp2 = edmondsKarp2.edmondsKarp(source, sink);
@@ -137,36 +138,32 @@ public class Main {
         }
     }
 
-    public static int[][] readMatrixFromFile(String filename) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            // Leer la primera línea para determinar el número de vértices
+    public static int[][] readMatrixFromFile(Path filename) {
+        try (BufferedReader reader = Files.newBufferedReader(filename)) {
             String line = reader.readLine();
             if (line == null) {
                 System.err.println("El archivo está vacío o no se pudo leer.");
                 return null;
             }
 
-            // Determinar el número de vértices basándonos en la longitud de la primera línea
             int numVertices = line.trim().split("\\s+").length;
             int[][] matrix = new int[numVertices][numVertices];
 
-            // Leer la matriz de capacidad
-            reader.close(); // Cerrar el lector anterior
-            try (BufferedReader newReader = new BufferedReader(new FileReader(filename))) {
-                for (int i = 0; i < numVertices; i++) {
-                    line = newReader.readLine();
-                    if (line == null) {
-                        System.err.println("El archivo no tiene suficiente contenido.");
-                        return null;
-                    }
-                    String[] tokens = line.trim().split("\\s+");
-                    if (tokens.length != numVertices) {
-                        System.err.println("La línea en el archivo no tiene la longitud esperada.");
-                        return null;
-                    }
-                    for (int j = 0; j < numVertices; j++) {
-                        matrix[i][j] = Integer.parseInt(tokens[j]);
-                    }
+            for (int i = 0; i < numVertices; i++) {
+                if (i != 0) {  // La primera línea ya fue leída
+                    line = reader.readLine();
+                }
+                if (line == null) {
+                    System.err.println("El archivo no tiene suficiente contenido.");
+                    return null;
+                }
+                String[] tokens = line.trim().split("\\s+");
+                if (tokens.length != numVertices) {
+                    System.err.println("La línea en el archivo no tiene la longitud esperada.");
+                    return null;
+                }
+                for (int j = 0; j < numVertices; j++) {
+                    matrix[i][j] = Integer.parseInt(tokens[j]);
                 }
             }
 
@@ -193,3 +190,4 @@ public class Main {
         }
     }
 }
+
