@@ -31,6 +31,8 @@ public class Main {
                     // Define los vértices de origen y destino para el flujo
                     int source = 0; // Vértice fuente
                     int sink = vertices[i] - 1; // Vértice sumidero (último vértice)
+                    //grafo1.printGraph();
+                    //grafo2.printGraph();
                     // Inicializa y ejecuta el algoritmo Edmonds-Karp
                     System.out.println("Edmonds-Karp");
                     EdmondsKarp edmondsKarp1 = new EdmondsKarp(grafo1); // Primer grafo
