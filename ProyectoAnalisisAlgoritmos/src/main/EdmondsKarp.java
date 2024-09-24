@@ -4,7 +4,12 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
+/*
+    Autores:
+    Alex Salmeron
+    Alisson Rodriguez
+    Asdrubal Madrigal
+*/
 class EdmondsKarp {
     private int[][] capacidad; // Matriz de capacidades del grafo
     private int[][] flujo; // Matriz de flujos del grafo

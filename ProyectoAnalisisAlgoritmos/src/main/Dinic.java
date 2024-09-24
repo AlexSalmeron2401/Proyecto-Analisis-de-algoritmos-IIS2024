@@ -1,6 +1,11 @@
 package main;
 import java.util.*;
-
+/*
+    Autores:
+    Alex Salmeron
+    Alisson Rodriguez
+    Asdrubal Madrigal
+*/
 public class Dinic {
     int INF = Integer.MAX_VALUE; // Valor infinito para flujos
     int nodes; // Número de nodos en el grafo

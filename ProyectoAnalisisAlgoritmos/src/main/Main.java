@@ -5,7 +5,12 @@ import java.nio.file.Files; // Importa Files para acceder a operaciones de archi
 import java.nio.file.Path; // Importa Path para representar rutas de archivos
 import java.nio.file.Paths; // Importa Paths para crear instancias de Path
 import java.util.List; // Importa List para trabajar con listas
-
+/*
+    Autores:
+    Alex Salmeron
+    Alisson Rodriguez
+    Asdrubal Madrigal
+*/
 public class Main {
     public static void main(String[] args) {
         // Define el directorio actual donde se encuentran los archivos

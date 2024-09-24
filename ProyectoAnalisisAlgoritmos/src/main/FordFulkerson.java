@@ -3,7 +3,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
+/*
+    Autores:
+    Alex Salmeron
+    Alisson Rodriguez
+    Asdrubal Madrigal
+*/
 public class FordFulkerson {
     private int comparisons; // Contador de comparaciones
     private int assignments; // Contador de asignaciones

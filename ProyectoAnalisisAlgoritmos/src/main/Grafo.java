@@ -3,7 +3,12 @@ import java.util.ArrayList; // Importa ArrayList para usar listas dinámicas
 import java.util.Collections; // Importa Collections para operaciones de colección
 import java.util.List; // Importa List para usar la interfaz de listas
 import java.util.Random; // Importa Random para generar números aleatorios
-
+/*
+    Autores:
+    Alex Salmeron
+    Alisson Rodriguez
+    Asdrubal Madrigal
+*/
 public class Grafo {
     private int[][] capacidad; // Matriz que almacena las capacidades de las aristas
     private int numVertices; // Número de vértices en el grafo
